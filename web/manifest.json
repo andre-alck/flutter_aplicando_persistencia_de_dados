@@ -1,6 +1,6 @@
 {
-    "name": "c_flutter_aplicando_persistencia_de_dados",
-    "short_name": "c_flutter_aplicando_persistencia_de_dados",
+    "name": "flutter_aplicando_persistencia_de_dados",
+    "short_name": "flutter_aplicando_persistencia_de_dados",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
