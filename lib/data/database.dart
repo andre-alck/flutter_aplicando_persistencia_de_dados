@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 Future<Database> getDatabase() async {
   final String databasePath = join(await getDatabasesPath(), 'task.db');
-  return openDatabase(databasePath,
+  Database database = await openDatabase(databasePath,
       onCreate: (db, version) => db.execute(TaskDao.createQuery));
+  return database;
 }

@@ -21,7 +21,32 @@ class TaskDao {
     return tasks;
   }
 
-  void save() async {}
+  Map<String, dynamic> toMap(Task task) {
+    return {
+      'name': task.name,
+      'imageUrl': task.imageUrl,
+      'difficulty': task.difficulty
+    };
+  }
+
+  Future<int> save(Task task) async {
+    debugPrint('save');
+
+    final Database database = await getDatabase();
+    List<Task> tasks = await find(task.name);
+    bool taskExists = tasks.isEmpty;
+    late final int numberOfChanges;
+
+    if (taskExists) {
+      numberOfChanges = await database.insert(_tableName, toMap(task));
+    } else {
+      numberOfChanges = await database.update(_tableName, toMap(task),
+          where: '$_name = ?', whereArgs: [task.name]);
+    }
+
+    return numberOfChanges;
+  }
+
   Future<List<Task>> findAll() async {
     debugPrint('findAll');
     final Database database = await getDatabase();
@@ -38,6 +63,35 @@ class TaskDao {
     return toList(tasks);
   }
 
-  Future<Task> update(String taskName) async {}
-  void delete(String taskName) async {}
+  Future<int> update(Task task) async {
+    debugPrint('update');
+
+    List<Task> tasks = await find(task.name);
+    bool taskExists = tasks.isNotEmpty;
+
+    int numberOfChanges = 0;
+    if (taskExists) {
+      final Database database = await getDatabase();
+      numberOfChanges = await database.update(_tableName, toMap(task),
+          where: '$_name = ?', whereArgs: [task.name]);
+    }
+
+    return numberOfChanges;
+  }
+
+  Future<int> delete(String taskName) async {
+    debugPrint('delete');
+
+    List<Task> tasks = await find(taskName);
+    bool taskExists = tasks.isNotEmpty;
+
+    int numberOfChanges = 0;
+    if (taskExists) {
+      final Database database = await getDatabase();
+      numberOfChanges = await database
+          .delete(_tableName, where: '$_name = ?', whereArgs: [taskName]);
+    }
+
+    return numberOfChanges;
+  }
 }
