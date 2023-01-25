@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.flutter_aplicando_persistencia_de_dados">
+    package="com.example.c_flutter_aplicando_persistencia_de_dados">
    <application
-        android:label="flutter_aplicando_persistencia_de_dados"
+        android:label="c_flutter_aplicando_persistencia_de_dados"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
