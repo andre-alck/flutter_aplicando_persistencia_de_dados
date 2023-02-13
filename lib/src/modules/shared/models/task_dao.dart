@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_aplicando_persistencia_de_dados/components/task.dart';
-import 'package:flutter_aplicando_persistencia_de_dados/data/database.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:flutter_aplicando_persistencia_de_dados/src/modules/shared/models/database_model.dart';
+import 'package:flutter_aplicando_persistencia_de_dados/src/modules/shared/widgets/task_widget.dart';
 
 class TaskDao {
   static const String createQuery =
@@ -13,12 +12,12 @@ class TaskDao {
   static const String _difficulty = 'difficulty';
 
   List<Task> toList(List<Map<String, dynamic>> mapList) {
-    final List<Task> tasks = [];
-    for (Map<String, dynamic> map in mapList) {
+    final tasks = <Task>[];
+    for (final map in mapList) {
       final name = map[_name];
       final imageUrl = map[_imageUrl];
       final difficulty = map[_difficulty];
-      Task task = Task(name, imageUrl, difficulty);
+      final task = Task(name, imageUrl, difficulty);
 
       tasks.add(task);
     }
@@ -37,16 +36,22 @@ class TaskDao {
   Future<int> save(Task task) async {
     debugPrint('save');
 
-    final Database database = await getDatabase();
-    List<Task> tasks = await find(task.name);
-    bool taskDoesNotExist = tasks.isEmpty;
+    final databaseModel = DatabaseModel();
+
+    final database = await databaseModel.getDatabase();
+    final tasks = await find(task.name);
+    final taskDoesNotExist = tasks.isEmpty;
     late final int numberOfChanges;
 
     if (taskDoesNotExist) {
       numberOfChanges = await database.insert(_tableName, toMap(task));
     } else {
-      numberOfChanges = await database.update(_tableName, toMap(task),
-          where: '$_name = ?', whereArgs: [task.name]);
+      numberOfChanges = await database.update(
+        _tableName,
+        toMap(task),
+        where: '$_name = ?',
+        whereArgs: [task.name],
+      );
     }
 
     return numberOfChanges;
@@ -54,7 +59,9 @@ class TaskDao {
 
   Future<List<Task>> findAll() async {
     debugPrint('findAll');
-    final Database database = await getDatabase();
+
+    final databaseModel = DatabaseModel();
+    final database = await databaseModel.getDatabase();
     final List<Map<String, dynamic>> taskList =
         await database.query(_tableName);
     return toList(taskList);
@@ -62,7 +69,9 @@ class TaskDao {
 
   Future<List<Task>> find(String taskName) async {
     debugPrint('find');
-    final Database database = await getDatabase();
+
+    final databaseModel = DatabaseModel();
+    final database = await databaseModel.getDatabase();
     final List<Map<String, dynamic>> tasks = await database
         .query(_tableName, where: '$_name = ?', whereArgs: [taskName]);
     return toList(tasks);
@@ -71,14 +80,20 @@ class TaskDao {
   Future<int> update(Task task) async {
     debugPrint('update');
 
-    List<Task> tasks = await find(task.name);
-    bool taskExists = tasks.isNotEmpty;
+    final tasks = await find(task.name);
+    final taskExists = tasks.isNotEmpty;
 
-    int numberOfChanges = 0;
+    var numberOfChanges = 0;
     if (taskExists) {
-      final Database database = await getDatabase();
-      numberOfChanges = await database.update(_tableName, toMap(task),
-          where: '$_name = ?', whereArgs: [task.name]);
+      final databaseModel = DatabaseModel();
+      final database = await databaseModel.getDatabase();
+
+      numberOfChanges = await database.update(
+        _tableName,
+        toMap(task),
+        where: '$_name = ?',
+        whereArgs: [task.name],
+      );
     }
 
     return numberOfChanges;
@@ -87,12 +102,14 @@ class TaskDao {
   Future<int> delete(String taskName) async {
     debugPrint('delete');
 
-    List<Task> tasks = await find(taskName);
-    bool taskExists = tasks.isNotEmpty;
+    final tasks = await find(taskName);
+    final taskExists = tasks.isNotEmpty;
 
-    int numberOfChanges = 0;
+    var numberOfChanges = 0;
     if (taskExists) {
-      final Database database = await getDatabase();
+      final databaseModel = DatabaseModel();
+      final database = await databaseModel.getDatabase();
+
       numberOfChanges = await database
           .delete(_tableName, where: '$_name = ?', whereArgs: [taskName]);
     }

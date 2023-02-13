@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_aplicando_persistencia_de_dados/data/task_inherited.dart';
-import 'package:flutter_aplicando_persistencia_de_dados/screens/initial_screen.dart';
+import 'package:flutter_aplicando_persistencia_de_dados/src/app_widget.dart';
 
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: TaskInherited(child: const InitialScreen()));
-  }
+void main() {
+  runApp(const AppWidget());
 }
