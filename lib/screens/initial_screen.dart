@@ -18,22 +18,11 @@ class _InitialScreenState extends State<InitialScreen> {
         body: FutureBuilder(
             future: TaskDao().findAll(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.connectionState == ConnectionState.none) {
-                const LoadingWidget();
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                const LoadingWidget();
-              }
-
-              if (snapshot.connectionState == ConnectionState.active) {
-                const LoadingWidget();
-              }
-
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
-                  return const Text(
-                      'Erro. Por favor, aguarde o próximo evento.');
+                  return const Center(
+                      child:
+                          Text('Erro. Por favor, aguarde o próximo evento.'));
                 }
 
                 if (snapshot.hasData) {
@@ -42,15 +31,14 @@ class _InitialScreenState extends State<InitialScreen> {
                   if (items.isNotEmpty) {
                     return ListView.builder(
                         itemCount: items.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            const ListTile());
+                        itemBuilder: (BuildContext context, int index) {
+                          final task = items[index];
+                          return task;
+                        });
                   }
                 }
               }
-
-              return const Center(
-                  child: Text(
-                      'Por favor, contate o setor de Tecnologia da Informação.'));
+              return const LoadingWidget();
             }),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
@@ -69,12 +57,14 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: const [
-      Text('Por favor, aguarde.'),
-      Padding(
-        padding: EdgeInsets.only(top: 20),
-        child: CircularProgressIndicator(),
-      )
-    ]);
+    return Center(
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.center, children: const [
+        Text('Por favor, aguarde.'),
+        Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: CircularProgressIndicator())
+      ]),
+    );
   }
 }

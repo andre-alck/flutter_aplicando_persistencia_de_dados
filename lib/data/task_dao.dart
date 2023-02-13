@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_aplicando_persistencia_de_dados/components/task.dart';
 import 'package:flutter_aplicando_persistencia_de_dados/data/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TaskDao {
   static const String createQuery =
-      '''CREATE TABLE $_tableName('$_name TEXT', '$_imageUrl TEXT', '$_difficulty INTEGER')''';
+      '''CREATE TABLE $_tableName (name TEXT, difficulty INTEGER, imageUrl TEXT)''';
 
   static const String _tableName = 'task';
   static const String _name = 'name';
@@ -15,7 +15,12 @@ class TaskDao {
   List<Task> toList(List<Map<String, dynamic>> mapList) {
     final List<Task> tasks = [];
     for (Map<String, dynamic> map in mapList) {
-      tasks.add(Task(map[_name], map[_difficulty], map[_difficulty]));
+      final name = map[_name];
+      final imageUrl = map[_imageUrl];
+      final difficulty = map[_difficulty];
+      Task task = Task(name, imageUrl, difficulty);
+
+      tasks.add(task);
     }
 
     return tasks;
@@ -34,10 +39,10 @@ class TaskDao {
 
     final Database database = await getDatabase();
     List<Task> tasks = await find(task.name);
-    bool taskExists = tasks.isEmpty;
+    bool taskDoesNotExist = tasks.isEmpty;
     late final int numberOfChanges;
 
-    if (taskExists) {
+    if (taskDoesNotExist) {
       numberOfChanges = await database.insert(_tableName, toMap(task));
     } else {
       numberOfChanges = await database.update(_tableName, toMap(task),

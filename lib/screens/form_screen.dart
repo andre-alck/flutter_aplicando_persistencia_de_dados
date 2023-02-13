@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_aplicando_persistencia_de_dados/data/task_inherited.dart';
+import 'package:flutter_aplicando_persistencia_de_dados/components/task.dart';
+import 'package:flutter_aplicando_persistencia_de_dados/data/task_dao.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({Key? key, required this.taskContext}) : super(key: key);
@@ -131,12 +132,23 @@ class _FormScreenState extends State<FormScreen> {
                               ElevatedButton(
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    TaskInherited.of(widget.taskContext)
-                                        .newTask(
-                                            nameController.text,
-                                            imageController.text,
-                                            int.parse(
-                                                difficultyController.text));
+                                    // TaskInherited.of(widget.taskContext)
+                                    //     .newTask(
+                                    //         nameController.text,
+                                    //         imageController.text,
+                                    //         int.parse(
+                                    //             difficultyController.text));
+
+                                    final String name =
+                                        nameController.text.trim();
+                                    final String imageUrl =
+                                        imageController.text.trim();
+                                    final int difficulty = int.parse(
+                                        difficultyController.text.trim());
+
+                                    final Task task =
+                                        Task(name, imageUrl, difficulty);
+                                    TaskDao().save(task);
 
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
