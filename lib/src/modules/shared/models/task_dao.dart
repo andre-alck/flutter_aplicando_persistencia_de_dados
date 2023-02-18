@@ -4,12 +4,13 @@ import 'package:flutter_aplicando_persistencia_de_dados/src/modules/shared/widge
 
 class TaskDao {
   static const String createQuery =
-      '''CREATE TABLE $_tableName (name TEXT, difficulty INTEGER, imageUrl TEXT)''';
+      '''CREATE TABLE $_tableName (name TEXT, difficulty INTEGER, imageUrl TEXT, level INTEGER)''';
 
   static const String _tableName = 'task';
   static const String _name = 'name';
   static const String _imageUrl = 'imageUrl';
   static const String _difficulty = 'difficulty';
+  static const String _level = 'level';
 
   List<Task> toList(List<Map<String, dynamic>> mapList) {
     final tasks = <Task>[];
@@ -17,7 +18,8 @@ class TaskDao {
       final name = map[_name];
       final imageUrl = map[_imageUrl];
       final difficulty = map[_difficulty];
-      final task = Task(name, imageUrl, difficulty);
+      final level = map[_level];
+      final task = Task(name, imageUrl, difficulty, level);
 
       tasks.add(task);
     }
@@ -29,7 +31,8 @@ class TaskDao {
     return {
       'name': task.name,
       'imageUrl': task.imageUrl,
-      'difficulty': task.difficulty
+      'difficulty': task.difficulty,
+      'level': task.level
     };
   }
 
@@ -64,7 +67,8 @@ class TaskDao {
     final database = await databaseModel.getDatabase();
     final List<Map<String, dynamic>> taskList =
         await database.query(_tableName);
-    return toList(taskList);
+    final tasks = toList(taskList);
+    return tasks;
   }
 
   Future<List<Task>> find(String taskName) async {

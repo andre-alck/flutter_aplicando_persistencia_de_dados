@@ -148,7 +148,7 @@ class _FormPageState extends State<FormPage> {
                         );
 
                         final taskDao = TaskDao();
-                        final task = Task(name, imageUrl, difficulty);
+                        final task = Task(name, imageUrl, difficulty, 0);
                         taskDao.save(task);
 
                         ScaffoldMessenger.of(context).showSnackBar(

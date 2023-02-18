@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_aplicando_persistencia_de_dados/src/modules/shared/models/task_dao.dart';
 import 'package:flutter_aplicando_persistencia_de_dados/src/modules/shared/widgets/difficulty_widget.dart';
 
 class Task extends StatefulWidget {
   final String name;
   final String imageUrl;
   final int difficulty;
+  late int level;
 
-  const Task(this.name, this.imageUrl, this.difficulty, {super.key});
+  Task(
+    this.name,
+    this.imageUrl,
+    this.difficulty,
+    this.level, {
+    super.key,
+  });
 
   @override
   State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-  int level = 0;
   bool assetOrNetwork() {
     if (widget.imageUrl.contains('http')) {
       return false;
@@ -87,9 +94,34 @@ class _TaskState extends State<Task> {
                       height: 52,
                       width: 52,
                       child: ElevatedButton(
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Deseja deletar a tarefa ${widget.name}?',
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () => setState(() {
+                                      TaskDao().delete(widget.name);
+                                      Navigator.pop(context);
+                                    }),
+                                    child: const Text('Sim'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Não'),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        },
                         onPressed: () {
                           setState(() {
-                            level++;
+                            widget.level++;
                           });
                         },
                         child: Column(
@@ -115,7 +147,7 @@ class _TaskState extends State<Task> {
                       child: LinearProgressIndicator(
                         color: Colors.white,
                         value: (widget.difficulty > 0)
-                            ? (level / widget.difficulty) / 10
+                            ? (widget.level / widget.difficulty) / 10
                             : 1,
                       ),
                     ),
@@ -123,7 +155,7 @@ class _TaskState extends State<Task> {
                   Padding(
                     padding: const EdgeInsets.all(12),
                     child: Text(
-                      'Nivel: $level',
+                      'Nivel: ${widget.level}',
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   )

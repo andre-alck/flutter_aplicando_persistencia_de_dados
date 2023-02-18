@@ -12,12 +12,32 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> {
+  late Future<List<Task>> _tasks;
+
+  @override
+  void initState() {
+    super.initState();
+    final _taskDao = TaskDao();
+    _tasks = _taskDao.findAll();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: Container(), title: const Text('Tarefas')),
+      appBar: AppBar(
+        leading: Container(),
+        title: const Text('Tarefas'),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              setState(() {});
+            },
+            child: const Icon(Icons.refresh),
+          )
+        ],
+      ),
       body: FutureBuilder(
-        future: TaskDao().findAll(),
+        future: _tasks,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
@@ -38,6 +58,10 @@ class _InitialPageState extends State<InitialPage> {
                   },
                 );
               }
+
+              return const Center(
+                child: Text('Não há nenhuma tarefa cadastrada.'),
+              );
             }
           }
           return const LoadingWidget();
